@@ -54,11 +54,12 @@ public class LoginServlet extends HttpServlet {
 		}.getClass().getEnclosingClass().getName() +
 				" : " + new Object() {
 				}.getClass().getEnclosingMethod().getName());
-
+		//呼び出し
 		String accountOrEmail = request.getParameter("accountOrEmail");
 		String password = request.getParameter("password");
-
+		//アカウントかメールとパスワードで一致するユーザーを探す
 		User user = new UserService().select(accountOrEmail, password);
+		//ユーザーに何もない(＝一致がない)場合はエラーを返す		
 		if (user == null) {
 			List<String> errorMessages = new ArrayList<String>();
 			errorMessages.add("ログインに失敗しました");
@@ -66,7 +67,7 @@ public class LoginServlet extends HttpServlet {
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 			return;
 		}
-
+		
 		HttpSession session = request.getSession();
 		session.setAttribute("loginUser", user);
 		response.sendRedirect("./");

@@ -92,7 +92,7 @@ public class UserService {
 			close(connection);
 		}
 	}
-
+	//ユーザーをselectする
 	public User select(int userId) {
 
 		log.info(new Object() {
@@ -121,7 +121,7 @@ public class UserService {
 			close(connection);
 		}
 	}
-	//updateメソッドの追加	
+	//updateメソッドの追加
 	public void update(User user) {
 
 		log.info(new Object() {

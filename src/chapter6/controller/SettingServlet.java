@@ -38,6 +38,7 @@ public class SettingServlet extends HttpServlet {
 	}
 
 	@Override
+	//設定画面の表示
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -48,14 +49,14 @@ public class SettingServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		User loginUser = (User) session.getAttribute("loginUser");
-
+		//ユーザーをselectするため、serviceを呼び出す
 		User user = new UserService().select(loginUser.getId());
 
 		request.setAttribute("user", user);
 		request.getRequestDispatcher("setting.jsp").forward(request, response);
 	}
 
-	//編集画面のServletのdoPost
+	//編集画面のServletのdoPost　ユーザの設定の編集処理
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

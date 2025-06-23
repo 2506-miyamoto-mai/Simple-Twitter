@@ -36,7 +36,7 @@ public class MessageServlet extends HttpServlet {
 		application.init();
 
 	}
-
+	//つぶやく
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -55,17 +55,17 @@ public class MessageServlet extends HttpServlet {
 			response.sendRedirect("./");
 			return;
 		}
-
+		//つぶやいたメッセージを表示
 		Message message = new Message();
 		message.setText(text);
-
+		//つぶやいたユーザー情報の表示
 		User user = (User) session.getAttribute("loginUser");
 		message.setUserId(user.getId());
 
 		new MessageService().insert(message);
 		response.sendRedirect("./");
 	}
-
+	//つぶやきのエラー表示
 	private boolean isValid(String text, List<String> errorMessages) {
 
 		log.info(new Object() {
@@ -73,7 +73,7 @@ public class MessageServlet extends HttpServlet {
 				" : " + new Object() {
 				}.getClass().getEnclosingMethod().getName());
 
-		if (StringUtils.isEmpty(text)) {
+		if (StringUtils.isBlank(text)) {
 			errorMessages.add("メッセージを入力してください");
 		} else if (140 < text.length()) {
 			errorMessages.add("140文字以下で入力してください");
