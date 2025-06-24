@@ -198,7 +198,6 @@ public class UserDao {
 			sql.append("    account = ?, ");
 			sql.append("    name = ?, ");
 			sql.append("    email = ?, ");
-
 			if (StringUtils.isNotBlank(user.getPassword())) {
 				sql.append("    password = ?, ");
 			}
@@ -211,13 +210,13 @@ public class UserDao {
 			ps.setString(1, user.getAccount());
 			ps.setString(2, user.getName());
 			ps.setString(3, user.getEmail());
-			if (StringUtils.isNotBlank(user.getPassword())) {
+			if (StringUtils.isBlank(user.getPassword())) {
+				ps.setString(4, user.getDescription());
+				ps.setInt(5, user.getId());
+			} else {
 				ps.setString(4, user.getPassword());
 				ps.setString(5, user.getDescription());
 				ps.setInt(6, user.getId());
-			} else {
-				ps.setString(4, user.getDescription());
-				ps.setInt(5, user.getId());
 			}
 			//実行
 			int count = ps.executeUpdate();
