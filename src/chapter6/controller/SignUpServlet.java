@@ -36,6 +36,7 @@ public class SignUpServlet extends HttpServlet {
 	}
 
 	@Override
+	//登録画面の表示
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 
@@ -48,6 +49,7 @@ public class SignUpServlet extends HttpServlet {
 	}
 
 	@Override
+	//ユーザの登録処理
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 
@@ -60,6 +62,7 @@ public class SignUpServlet extends HttpServlet {
 
 		User user = getUser(request);
 		if (!isValid(user, errorMessages)) {
+			//エラーの場合、メッセージをセット signup.jspにフォワード
 			request.setAttribute("errorMessages", errorMessages);
 			request.getRequestDispatcher("signup.jsp").forward(request, response);
 			return;
@@ -68,6 +71,7 @@ public class SignUpServlet extends HttpServlet {
 		response.sendRedirect("./");
 	}
 
+	//doPostの中の情報登録処理
 	private User getUser(HttpServletRequest request) throws IOException, ServletException {
 
 		log.info(new Object() {
@@ -84,6 +88,8 @@ public class SignUpServlet extends HttpServlet {
 		return user;
 	}
 
+	//エラーチェック
+	//エラー0件の場合…true、1件でもエラーがある場合はfalse
 	private boolean isValid(User user, List<String> errorMessages) {
 
 		log.info(new Object() {
@@ -114,9 +120,19 @@ public class SignUpServlet extends HttpServlet {
 			errorMessages.add("メールアドレスは50文字以下で入力してください");
 		}
 
+		//0件の場合だと  nullがreturnされる、1件の場合だと users.get(0)がreturnされる
+		User duplicateuesr = new UserService().select(account);
+
+		if (duplicateuesr != null) {
+			errorMessages.add("すでに存在するアカウントです");
+		}
+
+		//errorMessagesが1件でもあるという事＝何かしらのエラーにかかっている
 		if (errorMessages.size() != 0) {
 			return false;
 		}
+
+		//エラーが0件の場合
 		return true;
 	}
 }
