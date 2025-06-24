@@ -29,11 +29,10 @@ public class UserMessageDao {
 	public UserMessageDao() {
 		InitApplication application = InitApplication.getInstance();
 		application.init();
-
 	}
 
 	/*top画面表示*/
-	public List<UserMessage> select(Connection connection, int num) {
+	public List<UserMessage> select(Connection connection, Integer id, int num) {
 
 		log.info(new Object() {
 		}.getClass().getEnclosingClass().getName() +
@@ -43,6 +42,7 @@ public class UserMessageDao {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sql = new StringBuilder();
+			//Sqlの箱を作っている
 			sql.append("SELECT ");
 			sql.append("    messages.id as id, ");
 			sql.append("    messages.text as text, ");
@@ -53,13 +53,18 @@ public class UserMessageDao {
 			sql.append("FROM messages ");
 			sql.append("INNER JOIN users ");
 			sql.append("ON messages.user_id = users.id ");
+			if (id != null) {
+				sql.append("WHERE user_id = ? ");
+			}
 			sql.append("ORDER BY created_date DESC limit " + num);
-
+			//sqlをセット
 			ps = connection.prepareStatement(sql.toString());
-
+			//idに値が入っていたら値を当てはめる
+			if (id != null) {
+				ps.setInt(1, id);
+			}
 			//sqlを実行
 			ResultSet rs = ps.executeQuery();
-
 			// toUserMessagesメソッドの処理結果を変数messageに格納
 			List<UserMessage> messages = toUserMessages(rs);
 			return messages;
@@ -92,7 +97,7 @@ public class UserMessageDao {
 				message.setAccount(rs.getString("account"));
 				message.setName(rs.getString("name"));
 				message.setCreatedDate(rs.getTimestamp("created_date"));
-				
+
 				//ちっちゃい箱をおっきい箱に入れる
 				messages.add(message);
 			}
