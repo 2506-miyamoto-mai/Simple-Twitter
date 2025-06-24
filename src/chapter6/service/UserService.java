@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import chapter6.beans.User;
 import chapter6.dao.UserDao;
 import chapter6.logging.InitApplication;
@@ -92,6 +94,7 @@ public class UserService {
 			close(connection);
 		}
 	}
+
 	//ユーザーをselectする
 	public User select(int userId) {
 
@@ -121,6 +124,7 @@ public class UserService {
 			close(connection);
 		}
 	}
+
 	//updateメソッドの追加
 	public void update(User user) {
 
@@ -131,11 +135,14 @@ public class UserService {
 
 		Connection connection = null;
 		try {
-			// パスワード暗号化
-			String encPassword = CipherUtil.encrypt(user.getPassword());
-			user.setPassword(encPassword);
-
+			//パスワードの更新があったら暗号化、なかったら次へ
+			if (StringUtils.isNotBlank(user.getPassword())) {
+				// パスワード暗号化
+				String encPassword = CipherUtil.encrypt(user.getPassword());
+				user.setPassword(encPassword);
+			}
 			connection = getConnection();
+			//updateするためにDaoに渡す
 			new UserDao().update(connection, user);
 			commit(connection);
 		} catch (RuntimeException e) {
