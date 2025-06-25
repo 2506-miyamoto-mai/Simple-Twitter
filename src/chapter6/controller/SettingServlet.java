@@ -108,6 +108,7 @@ public class SettingServlet extends HttpServlet {
 	}
 
 	//入力値チェック＝jspから来た値のチェック
+	//エラー0件の場合…true、1件でもエラーがある場合はfalse
 	private boolean isValid(User user, List<String> errorMessages) {
 
 		log.info(new Object() {
@@ -131,10 +132,16 @@ public class SettingServlet extends HttpServlet {
 		if (!StringUtils.isEmpty(email) && (50 < email.length())) {
 			errorMessages.add("メールアドレスは50文字以下で入力してください");
 		}
-
+		User duplicateuesr = new UserService().select(account);
+		//nullじゃない、箱の中からアカウントのデータを取り出して比べたときに一致しない
+		if (duplicateuesr != null && duplicateuesr.getId() != user.getId()) {
+			errorMessages.add("すでに存在するアカウントです");
+		}
+		//errorMessagesが1件でもあるという事＝何かしらのエラーにかかっている
 		if (errorMessages.size() != 0) {
 			return false;
 		}
+		//エラーが0件の場合
 		return true;
 	}
 }

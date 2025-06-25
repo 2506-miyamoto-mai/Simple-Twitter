@@ -242,19 +242,21 @@ public class UserDao {
 		PreparedStatement ps = null;
 		try {
 			String sql = "SELECT * FROM users WHERE account = ?";
-
+			//Sqlをセット
 			ps = connection.prepareStatement(sql);
+			//値を当てはめる			
 			ps.setString(1, account);
-
+			//Sqlを実行
 			ResultSet rs = ps.executeQuery();
-
+			// toUsersメソッドの処理結果を変数usersに格納
 			List<User> users = toUsers(rs);
-			if (users.isEmpty()) {
-				return null;
+			
+			if (users.isEmpty()) { 
+				return null; //0件の場合＝被ってる
 			} else if (2 <= users.size()) {
-				throw new IllegalStateException("ユーザーが重複しています");
+				throw new IllegalStateException("ユーザーが重複しています"); //2件以上の場合
 			} else {
-				return users.get(0);
+				return users.get(0); //1件の場合=被ってる
 			}
 		} catch (SQLException e) {
 			throw new SQLRuntimeException(e);
