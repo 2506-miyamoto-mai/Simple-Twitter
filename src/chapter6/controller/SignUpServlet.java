@@ -119,19 +119,15 @@ public class SignUpServlet extends HttpServlet {
 		if (!StringUtils.isEmpty(email) && (50 < email.length())) {
 			errorMessages.add("メールアドレスは50文字以下で入力してください");
 		}
-
 		//0件の場合だと  nullがreturnされる、1件の場合だと users.get(0)がreturnされる
 		User duplicateuesr = new UserService().select(account);
-
 		if (duplicateuesr != null) {
 			errorMessages.add("すでに存在するアカウントです");
 		}
-
 		//errorMessagesが1件でもあるという事＝何かしらのエラーにかかっている
 		if (errorMessages.size() != 0) {
 			return false;
 		}
-
 		//エラーが0件の場合
 		return true;
 	}
