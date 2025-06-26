@@ -55,17 +55,22 @@ public class MessageServlet extends HttpServlet {
 			response.sendRedirect("./");
 			return;
 		}
-		//つぶやいたメッセージを表示
+
 		Message message = new Message();
+		
+		//画面から入力されたつぶやきをセット
 		message.setText(text);
-		//つぶやいたユーザー情報の表示
+		
+		//つぶやいたユーザー情報の取得
 		User user = (User) session.getAttribute("loginUser");
+		
+		//ログインしているuserのIDだけをセット
 		message.setUserId(user.getId());
 
 		new MessageService().insert(message);
 		response.sendRedirect("./");
 	}
-	//つぶやきのエラー表示
+	//つぶやきのチェック　エラーがある場合、False
 	private boolean isValid(String text, List<String> errorMessages) {
 
 		log.info(new Object() {

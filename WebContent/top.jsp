@@ -54,22 +54,23 @@
 		<c:if test="${ isShowMessageForm }">
 			<form action="message" method="post">
 				いま、どうしてる？<br />
+				<!-- name…getParamするときに必要 -->
 				<textarea name="text" cols="100" rows="5" class="tweet-box"></textarea>
 				<br /> <input type="submit" value="つぶやく">（140文字まで）
 			</form>
 		</c:if>
 	</div>
 	<div class="messages">
+		<%-- items でsetしたmessagesを指定、topServgletでselectしたつぶやきを繰り返し表示--%>
 		<c:forEach items="${messages}" var="message">
 			<div class="message">
 				<div class="account-name">
 					<!--特定のユーザーのつぶやきだけ表示-->
-					<span class="account">
-					 <a href="./?user_id=<c:out value="${message.userId}"/> ">
-					   <c:out value="${message.account}" />
-					 </a>
-					</span>
-					<span class="name"><c:out value="${message.name}" /></span>
+					<span class="account"> <a
+						href="./?user_id=<c:out value="${message.userId}"/> "> <c:out
+								value="${message.account}" />
+					</a>
+					</span> <span class="name"><c:out value="${message.name}" /></span>
 				</div>
 				<div class="text">
 					<c:out value="${message.text}" />
@@ -78,6 +79,14 @@
 					<fmt:formatDate value="${message.createdDate}"
 						pattern="yyyy/MM/dd HH:mm:ss" />
 				</div>
+				<%-- 	<c:if> --%>
+				<!-- action…@WebServlet(urlPatterns)と繋がる   method…getまたはpost -->
+				<form action="deletemessage" method="post">
+					<!-- value… -->
+					<input type="hidden" name="messageId" value="${message.id}">
+					<button type="submit">削除</button>
+				</form>
+				<%-- 	</c:if> --%>
 			</div>
 		</c:forEach>
 	</div>
