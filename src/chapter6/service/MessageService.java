@@ -103,6 +103,8 @@ public class MessageService {
 			close(connection);
 		}
 	}
+
+	//つぶやきの削除
 	public void delete(Message deletemessage) {
 
 		log.info(new Object() {
@@ -114,6 +116,64 @@ public class MessageService {
 		try {
 			connection = getConnection();
 			new MessageDao().delete(connection, deletemessage);
+			commit(connection);
+		} catch (RuntimeException e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
+	//つぶやきの編集をするためにテキストエリアにつぶやきを表示する
+	public int select(Connection connection, int messageId) {
+
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
+
+		try {
+			connection = getConnection();
+
+			/*
+			* messageDao.selectに引数としてMessage型のeditmessageを追加
+			対応するユーザーIDの投稿を取得する
+			*/
+			new MessageDao().select(connection, messageId);
+			return messageId;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
+	public void update(Connection connection, int messageId, String text) {
+
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
+
+		try {
+			connection = getConnection();
+			new MessageDao().update(connection, messageId, text);
 			commit(connection);
 		} catch (RuntimeException e) {
 			rollback(connection);
