@@ -173,21 +173,14 @@ public class MessageDao {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE messages SET ");
-			sql.append("    user_id, ");
-			sql.append("    text, ");
-			sql.append("    created_date, ");
-			sql.append("    updated_date ");
-			sql.append(") VALUES ( ");
-			sql.append("    ?, "); // user_id
-			sql.append("    ?, "); // text
-			sql.append("    CURRENT_TIMESTAMP, "); // created_date
-			sql.append("    CURRENT_TIMESTAMP "); // updated_date
-			sql.append(")");
+			sql.append("    text = ?, ");
+			sql.append("    updated_date = CURRENT_TIMESTAMP ");
+			sql.append("WHERE id = ?");
 			//sqlと接続
 			ps = connection.prepareStatement(sql.toString());
 			//更新する値をセット
-			ps.setInt(1, messageId);
-			ps.setString(2, text);
+			ps.setString(1, text);
+			ps.setInt(2, messageId);
 			//DBを更新
 			ps.executeUpdate();
 		} catch (SQLException e) {

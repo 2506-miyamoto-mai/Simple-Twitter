@@ -73,7 +73,7 @@
 					</span> <span class="name"><c:out value="${message.name}" /></span>
 				</div>
 				<div class="text">
-					<c:out value="${message.text}" />
+					<pre><c:out value="${message.text}"/></pre>
 				</div>
 				<div class="date">
 					<fmt:formatDate value="${message.createdDate}"
@@ -83,7 +83,7 @@
 					<!-- 削除ボタン -->
 					<c:if test="${message.userId == loginUser.id}">
 						<!-- action…@WebServlet(urlPatterns)と繋がる   method…getまたはpost -->
-						<form action="deletemessage" method="post">
+						<form action="deleteMessage" method="post">
 							<!-- value… -->
 							<input type="hidden" name="messageId" value="${message.id}">
 							<button type="submit">削除</button>
@@ -92,7 +92,7 @@
 					<!-- 編集ボタン -->
 					<c:if test="${message.userId == loginUser.id}">
 						<!-- action…@WebServlet(urlPatterns)と繋がる   method…getまたはpost -->
-						<form action="editemessage" method="get">
+						<form action="edit" method="get">
 							<!-- value… -->
 							<input type="hidden" name="messageId" value="${message.id}">
 							<button type="submit">編集</button>

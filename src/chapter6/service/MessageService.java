@@ -133,7 +133,7 @@ public class MessageService {
 	}
 
 	//つぶやきの編集をするためにテキストエリアにつぶやきを表示する
-	public int select(Connection connection, int messageId) {
+	public Message select(Connection connection, int messageId) {
 
 		log.info(new Object() {
 		}.getClass().getEnclosingClass().getName() +
@@ -142,13 +142,12 @@ public class MessageService {
 
 		try {
 			connection = getConnection();
-
 			/*
 			* messageDao.selectに引数としてMessage型のeditmessageを追加
-			対応するユーザーIDの投稿を取得する
+			対応するIDの投稿を取得する
 			*/
-			new MessageDao().select(connection, messageId);
-			return messageId;
+			Message message = new MessageDao().select(connection, messageId);
+			return message;
 		} catch (RuntimeException e) {
 			rollback(connection);
 			log.log(Level.SEVERE, new Object() {
@@ -164,6 +163,7 @@ public class MessageService {
 		}
 	}
 
+	//つぶやきの編集をするために受け取った情報をDaoに渡す
 	public void update(Connection connection, int messageId, String text) {
 
 		log.info(new Object() {

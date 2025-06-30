@@ -19,7 +19,7 @@ import chapter6.beans.Message;
 import chapter6.logging.InitApplication;
 import chapter6.service.MessageService;
 
-@WebServlet(urlPatterns = { "/editemessage" })
+@WebServlet(urlPatterns = { "/edit" })
 public class EditServlet extends HttpServlet {
 
 	/**
@@ -45,15 +45,30 @@ public class EditServlet extends HttpServlet {
 		}.getClass().getEnclosingClass().getName() +
 				" : " + new Object() {
 				}.getClass().getEnclosingMethod().getName());
-		Connection connection = null;
-		int messageId = Integer.parseInt(request.getParameter("messageId"));
 
-		Message editmessages = new Message();
-		//ログインしている人のメッセージIDをset
-		editmessages.setId(messageId);
-		new MessageService().select(connection, messageId);
-		//DBで検索したつぶやきを受け取る
-		request.setAttribute("editemessage", editmessages);
+		Connection connection = null;
+		//パラメータのつぶやきIdが数字以外のときにエラーを表示する
+			int messageId = Integer.parseInt(request.getParameter("messageId"));
+		if (messageId.matches("")) {
+			request.setAttribute("error", "不正なパラメータが入力されました");
+			request.getRequestDispatcher("top.jsp").forward(request, response);
+			return;
+		}
+		//パラメータのつぶやきIDが削除されているときにエラーを表示する
+		if (messageId == null || messageId.isEmpty()) {
+			request.setAttribute("error", "不正なパラメータが入力されました");
+			request.getRequestDispatcher("top.jsp").forward(request, response);
+		}
+		//DBで検索したつぶやきを取得
+		Message editmessage = new MessageService().select(connection, messageId);
+
+		//URLのパラメータが存在しないつぶやきIDになっていたらエラーを表示する
+		if (editmessage == null) {
+			request.setAttribute("error", "不正なパラメータが入力されました");
+			request.getRequestDispatcher("top.jsp").forward(request, response);
+		}
+		//requestに値をset
+		request.setAttribute("message", editmessage);
 		//編集画面へfoward
 		request.getRequestDispatcher("edit.jsp").forward(request, response);
 	}
@@ -73,10 +88,9 @@ public class EditServlet extends HttpServlet {
 
 		int messageId = Integer.parseInt(request.getParameter("messageId"));
 		String text = request.getParameter("text");
-		//エラーチェック→エラーがなかったらトップ画面へ
+		//エラーチェック→エラーがなかったらupdate
 		if (!isValid(text, errorMessages)) {
 			session.setAttribute("errorMessages", errorMessages);
-			response.sendRedirect("./");
 			return;
 		}
 		Connection connection = null;
@@ -84,13 +98,13 @@ public class EditServlet extends HttpServlet {
 
 		//画面で入力されたつぶやきをセット
 		updatemessage.setId(messageId);
-		updatemessage.setText(text);
+		updatemessage.setText("text");
 
 		new MessageService().update(connection, messageId, text);
 		response.sendRedirect("./");
 	}
 
-	//つぶやきのチェック　エラーがある場合、False
+	//つぶやきのチェック(エラーがある場合、False)
 	private boolean isValid(String text, List<String> errorMessages) {
 
 		log.info(new Object() {
