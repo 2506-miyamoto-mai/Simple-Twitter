@@ -31,7 +31,6 @@
 				</h2>
 			</div>
 			<div class="account">
-				@
 				<c:out value="${loginUser.account}" />
 			</div>
 			<div class="description">
@@ -49,7 +48,9 @@
 		</div>
 		<c:remove var="errorMessages" scope="session" />
 	</c:if>
-
+	<div class="error">
+		<c:if test="${not empty error}">${error}</c:if>
+	</div>
 	<div class="form-area">
 		<c:if test="${ isShowMessageForm }">
 			<form action="message" method="post">
@@ -66,18 +67,22 @@
 			<div class="message">
 				<div class="account-name">
 					<!--特定のユーザーのつぶやきだけ表示-->
-					<span class="account"> <a
-						href="./?user_id=<c:out value="${message.userId}"/> "> <c:out
-								value="${message.account}" />
-					</a>
-					</span> <span class="name"><c:out value="${message.name}" /></span>
+					<span class="account">
+						<a href="./?user_id=<c:out value="${message.userId}"/> ">
+							<c:out value="${message.account}" />
+						</a>
+					</span>
+					<span class="name">
+						<c:out value="${message.name}" />
+					</span>
 				</div>
 				<div class="text">
-					<pre><c:out value="${message.text}"/></pre>
+					<pre>
+						<c:out value="${message.text}" />
+					</pre>
 				</div>
 				<div class="date">
-					<fmt:formatDate value="${message.createdDate}"
-						pattern="yyyy/MM/dd HH:mm:ss" />
+					<fmt:formatDate value="${message.createdDate}" pattern="yyyy/MM/dd HH:mm:ss" />
 				</div>
 				<div class="bottun">
 					<!-- 削除ボタン -->

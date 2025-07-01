@@ -47,25 +47,26 @@ public class EditServlet extends HttpServlet {
 				}.getClass().getEnclosingMethod().getName());
 
 		Connection connection = null;
-		//パラメータのつぶやきIdが数字以外のときにエラーを表示する
-			int messageId = Integer.parseInt(request.getParameter("messageId"));
-		if (messageId.matches("")) {
-			request.setAttribute("error", "不正なパラメータが入力されました");
-			request.getRequestDispatcher("top.jsp").forward(request, response);
+		//パラメータのつぶやきIdが数字以外のときとつぶやきIDが削除されているときにエラーを表示する
+		String messageid = request.getParameter("messageId");
+
+		if (!messageid.matches("^[1-9]\\d*$") || messageid == null) {
+			HttpSession session = request.getSession();
+			session.setAttribute("errorMessages", "不正なパラメータが入力されました");
+			response.sendRedirect("./");
 			return;
 		}
-		//パラメータのつぶやきIDが削除されているときにエラーを表示する
-		if (messageId == null || messageId.isEmpty()) {
-			request.setAttribute("error", "不正なパラメータが入力されました");
-			request.getRequestDispatcher("top.jsp").forward(request, response);
-		}
+
+		int messageId = Integer.parseInt(request.getParameter("messageId"));
 		//DBで検索したつぶやきを取得
 		Message editmessage = new MessageService().select(connection, messageId);
 
 		//URLのパラメータが存在しないつぶやきIDになっていたらエラーを表示する
 		if (editmessage == null) {
-			request.setAttribute("error", "不正なパラメータが入力されました");
-			request.getRequestDispatcher("top.jsp").forward(request, response);
+			HttpSession session = request.getSession();
+			session.setAttribute("errorMessages", "不正なパラメータが入力されました");
+			response.sendRedirect("./");
+			return;
 		}
 		//requestに値をset
 		request.setAttribute("message", editmessage);
